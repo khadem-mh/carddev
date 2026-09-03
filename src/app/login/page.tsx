@@ -2,30 +2,30 @@
 import { useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
+import { useAuth } from "@/context/AuthContext";
 import { FiMail, FiLock, FiEye, FiEyeOff, FiBookOpen } from "react-icons/fi";
 import { FcGoogle } from "react-icons/fc";
 
 export default function LoginPage() {
   const router = useRouter();
+  const { login } = useAuth();
   const [show, setShow] = useState(false);
   const [form, setForm] = useState({ email: "", password: "", remember: false });
   const [loading, setLoading] = useState(false);
-  const [error, setError] = useState("");
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setError("");
     setLoading(true);
     await new Promise((r) => setTimeout(r, 900));
-    setLoading(false);
-    router.push("/");
+    login(form.email);
+    router.push("/dashboard");
   };
 
   const handleGoogle = async () => {
     setLoading(true);
     await new Promise((r) => setTimeout(r, 700));
-    setLoading(false);
-    router.push("/");
+    login("user@gmail.com", "کاربر گوگل");
+    router.push("/dashboard");
   };
 
   return (
@@ -104,8 +104,6 @@ export default function LoginPage() {
               />
               <span className="text-sm text-gray-600">مرا به خاطر بسپار</span>
             </label>
-
-            {error && <p className="text-sm text-red-500 bg-red-50 rounded-xl px-4 py-2">{error}</p>}
 
             <button
               type="submit"

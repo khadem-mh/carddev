@@ -2,11 +2,13 @@
 import { useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
+import { useAuth } from "@/context/AuthContext";
 import { FiMail, FiLock, FiEye, FiEyeOff, FiUser, FiBookOpen } from "react-icons/fi";
 import { FcGoogle } from "react-icons/fc";
 
 export default function RegisterPage() {
   const router = useRouter();
+  const { login } = useAuth();
   const [show, setShow] = useState(false);
   const [showC, setShowC] = useState(false);
   const [loading, setLoading] = useState(false);
@@ -27,16 +29,16 @@ export default function RegisterPage() {
     const errs = validate();
     if (Object.keys(errs).length > 0) { setErrors(errs); return; }
     setLoading(true);
-    await new Promise((r) => setTimeout(r, 900));
-    setLoading(false);
-    router.push("/");
+    await new Promise((r) => setTimeout(r, 800));
+    login(form.email, form.name);
+    router.push("/dashboard");
   };
 
   const handleGoogle = async () => {
     setLoading(true);
     await new Promise((r) => setTimeout(r, 700));
-    setLoading(false);
-    router.push("/");
+    login("user@gmail.com", "کاربر گوگل");
+    router.push("/dashboard");
   };
 
   const f = (id: keyof typeof form) => ({
@@ -61,7 +63,7 @@ export default function RegisterPage() {
             <span className="text-2xl font-black text-amber-700">کتاب‌خانه</span>
           </Link>
           <h1 className="text-2xl font-black text-gray-900 mt-4">ایجاد حساب کاربری</h1>
-          <p className="text-gray-500 text-sm mt-1">به خانواده کتاب‌خانه بپیوند</p>
+          <p className="text-gray-500 text-sm mt-1">به خانواده کتاب‌خانه بپیوند و PDF کتاب‌ها رو دانلود کن</p>
         </div>
 
         <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-8">
@@ -123,10 +125,6 @@ export default function RegisterPage() {
               {errors.confirm && <p className="text-xs text-red-500 mt-1">{errors.confirm}</p>}
             </div>
 
-            <p className="text-xs text-gray-400">
-              با ثبت‌نام، <Link href="#" className="text-amber-600 hover:underline">قوانین و شرایط</Link> را می‌پذیری.
-            </p>
-
             <button
               type="submit"
               disabled={loading}
@@ -137,7 +135,7 @@ export default function RegisterPage() {
                   <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
                   <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8H4z" />
                 </svg>
-              ) : "ایجاد حساب"}
+              ) : "ایجاد حساب و ورود"}
             </button>
           </form>
 

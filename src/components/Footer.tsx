@@ -67,7 +67,7 @@ export default function Footer() {
         </div>
 
         <div className="border-t border-gray-800 pt-6 flex flex-col sm:flex-row items-center justify-between gap-4">
-          <p className="text-sm">© ۱۴۰۳ کتاب‌خانه. تمام حقوق محفوظ است.</p>
+          <p className="text-sm">© ۱۴۰۵ کتاب‌خانه. تمام حقوق محفوظ است.</p>
           <div className="flex items-center gap-2">
             {["ویزا", "مسترکارت", "شبا"].map((p) => (
               <span key={p} className="bg-gray-800 text-gray-400 text-xs px-3 py-1.5 rounded-lg">{p}</span>
