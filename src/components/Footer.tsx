@@ -45,9 +45,9 @@ export default function Footer() {
             {
               title: "ارتباط با ما",
               links: [
-                { label: "info@ketabkhaneh.ir", href: "#" },
-                { label: "۰۲۱-۱۲۳۴۵۶۷۸", href: "#" },
-                { label: "تهران، خیابان ولیعصر", href: "#" },
+                { label: "khadem13359@gmail.com", href: "mailto:khadem13359@gmail.com" },
+                { label: "۰۵۱-۳۲۷۴۴۲۹۲", href: "tel:05132744292" },
+                { label: "بلوار مجلسی غربی، مسلم جنوبی ۱۶/۱ ابراهیمی ۱۸", href: "#" },
               ],
             },
           ].map((col) => (
