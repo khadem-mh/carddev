@@ -15,11 +15,18 @@ export default function CartPage() {
   const handlePay = async () => {
     setPaying(true);
     await new Promise((r) => setTimeout(r, 1200));
+    // save purchased books to localStorage
+    try {
+      const existing = JSON.parse(localStorage.getItem("purchased_books") || "[]");
+      const existingIds = new Set(existing.map((b: { id: number }) => b.id));
+      const newBooks = items.filter((i) => !existingIds.has(i.id));
+      localStorage.setItem("purchased_books", JSON.stringify([...existing, ...newBooks]));
+    } catch {}
     setPaying(false);
     setPaid(true);
     setTimeout(() => {
       clearCart();
-      router.push("/");
+      router.push("/dashboard");
     }, 2000);
   };
 

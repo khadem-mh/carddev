@@ -1,5 +1,5 @@
 "use client";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
 import Link from "next/link";
@@ -7,18 +7,24 @@ import { useAuth } from "@/context/AuthContext";
 import { useCart } from "@/context/CartContext";
 import { FiLogOut, FiDownload, FiShoppingBag, FiUser, FiBookOpen, FiStar, FiPackage } from "react-icons/fi";
 import { HiStar } from "react-icons/hi";
-import { books } from "@/lib/data";
-
-const mockPurchased = [books[0], books[3], books[5]];
+import { Book } from "@/lib/data";
 
 export default function DashboardPage() {
   const router = useRouter();
   const { user, logout, isLogged } = useAuth();
   const { items, totalItems, totalPrice } = useCart();
+  const [purchased, setPurchased] = useState<Book[]>([]);
 
   useEffect(() => {
     if (!isLogged) router.push("/login");
   }, [isLogged, router]);
+
+  useEffect(() => {
+    try {
+      const saved = JSON.parse(localStorage.getItem("purchased_books") || "[]");
+      setPurchased(saved);
+    } catch {}
+  }, []);
 
   if (!user) return null;
 
@@ -57,8 +63,8 @@ export default function DashboardPage() {
       {/* Stats */}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-10">
         {[
-          { icon: <FiBookOpen />, label: "کتاب خریداری‌شده", value: mockPurchased.length, color: "bg-amber-50 text-amber-600" },
-          { icon: <FiDownload />, label: "دانلود موجود", value: mockPurchased.length, color: "bg-blue-50 text-blue-600" },
+          { icon: <FiBookOpen />, label: "کتاب خریداری‌شده", value: purchased.length, color: "bg-amber-50 text-amber-600" },
+          { icon: <FiDownload />, label: "دانلود موجود", value: purchased.length, color: "bg-blue-50 text-blue-600" },
           { icon: <FiShoppingBag />, label: "در سبد خرید", value: totalItems, color: "bg-purple-50 text-purple-600" },
           { icon: <FiStar />, label: "امتیاز کاربری", value: "طلایی", color: "bg-yellow-50 text-yellow-600" },
         ].map((s) => (
@@ -78,10 +84,10 @@ export default function DashboardPage() {
           <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-6 mb-6">
             <div className="flex items-center justify-between mb-5">
               <h2 className="font-black text-gray-900 text-lg">کتاب‌های خریداری‌شده</h2>
-              <span className="text-xs bg-amber-100 text-amber-700 font-bold px-2.5 py-1 rounded-full">{mockPurchased.length} کتاب</span>
+              <span className="text-xs bg-amber-100 text-amber-700 font-bold px-2.5 py-1 rounded-full">{purchased.length} کتاب</span>
             </div>
             <div className="space-y-4">
-              {mockPurchased.map((book) => (
+              {purchased.map((book) => (
                 <div key={book.id} className="flex items-center gap-4 p-3 rounded-xl hover:bg-gray-50 transition-colors">
                   <div className="relative h-16 w-12 shrink-0 rounded-xl overflow-hidden shadow-sm">
                     <Image src={book.cover} alt={book.title} fill className="object-cover" />
