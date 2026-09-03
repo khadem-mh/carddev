@@ -5,15 +5,18 @@ import Image from "next/image";
 import Link from "next/link";
 import { useAuth } from "@/context/AuthContext";
 import { useCart } from "@/context/CartContext";
-import { FiLogOut, FiDownload, FiShoppingBag, FiUser, FiBookOpen, FiStar, FiPackage } from "react-icons/fi";
+import { FiLogOut, FiDownload, FiShoppingBag, FiUser, FiBookOpen, FiStar, FiPackage, FiX, FiCheck } from "react-icons/fi";
 import { HiStar } from "react-icons/hi";
 import { Book, books } from "@/lib/data";
 
 export default function DashboardPage() {
   const router = useRouter();
-  const { user, logout, isLogged } = useAuth();
+  const { user, login, logout, isLogged } = useAuth();
   const { items, totalItems, totalPrice } = useCart();
   const [purchased, setPurchased] = useState<Book[]>([]);
+  const [editOpen, setEditOpen] = useState(false);
+  const [editForm, setEditForm] = useState({ name: "", email: "" });
+  const [editSaved, setEditSaved] = useState(false);
 
   useEffect(() => {
     if (!isLogged) router.push("/login");
@@ -28,6 +31,19 @@ export default function DashboardPage() {
 
   if (!user) return null;
 
+  const openEdit = () => {
+    setEditForm({ name: user.name, email: user.email });
+    setEditSaved(false);
+    setEditOpen(true);
+  };
+
+  const saveEdit = () => {
+    if (!editForm.name.trim()) return;
+    login(editForm.email, editForm.name);
+    setEditSaved(true);
+    setTimeout(() => setEditOpen(false), 1000);
+  };
+
   const handleLogout = () => {
     logout();
     router.push("/");
@@ -35,6 +51,70 @@ export default function DashboardPage() {
 
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
+      {/* Edit Profile Modal */}
+      {editOpen && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center px-4">
+          <div className="absolute inset-0 bg-black/40 backdrop-blur-sm" onClick={() => setEditOpen(false)} />
+          <div className="relative bg-white rounded-2xl shadow-2xl w-full max-w-md p-6 z-10">
+            <div className="flex items-center justify-between mb-5">
+              <h2 className="font-black text-gray-900 text-lg">ویرایش پروفایل</h2>
+              <button onClick={() => setEditOpen(false)} className="p-1.5 hover:bg-gray-100 rounded-lg transition-colors">
+                <FiX className="h-5 w-5 text-gray-500" />
+              </button>
+            </div>
+
+            <div className="flex justify-center mb-5">
+              <img src={user.avatar} alt={user.name} className="w-20 h-20 rounded-2xl border-2 border-amber-200" />
+            </div>
+
+            <div className="space-y-4">
+              <div>
+                <label className="block text-sm font-semibold text-gray-700 mb-1.5">نام و نام خانوادگی</label>
+                <div className="relative">
+                  <FiUser className="absolute right-3 top-3 h-4 w-4 text-gray-400" />
+                  <input
+                    type="text"
+                    value={editForm.name}
+                    onChange={(e) => setEditForm({ ...editForm, name: e.target.value })}
+                    className="w-full border border-gray-200 rounded-xl py-2.5 pr-10 pl-4 text-sm focus:outline-none focus:border-amber-400 focus:ring-2 focus:ring-amber-100 transition-all"
+                  />
+                </div>
+              </div>
+              <div>
+                <label className="block text-sm font-semibold text-gray-700 mb-1.5">ایمیل</label>
+                <div className="relative">
+                  <FiPackage className="absolute right-3 top-3 h-4 w-4 text-gray-400" />
+                  <input
+                    type="email"
+                    value={editForm.email}
+                    onChange={(e) => setEditForm({ ...editForm, email: e.target.value })}
+                    className="w-full border border-gray-200 rounded-xl py-2.5 pr-10 pl-4 text-sm focus:outline-none focus:border-amber-400 focus:ring-2 focus:ring-amber-100 transition-all"
+                  />
+                </div>
+              </div>
+            </div>
+
+            <div className="flex gap-3 mt-6">
+              <button
+                onClick={saveEdit}
+                className={`flex-1 flex items-center justify-center gap-2 font-bold py-3 rounded-xl transition-all text-sm ${
+                  editSaved
+                    ? "bg-emerald-500 text-white"
+                    : "bg-amber-600 hover:bg-amber-700 active:scale-95 text-white shadow-md shadow-amber-200"
+                }`}
+              >
+                {editSaved ? <><FiCheck className="h-4 w-4" /> ذخیره شد!</> : "ذخیره تغییرات"}
+              </button>
+              <button
+                onClick={() => setEditOpen(false)}
+                className="px-4 py-3 border border-gray-200 hover:border-gray-300 text-gray-600 rounded-xl transition-colors text-sm font-medium"
+              >
+                انصراف
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
       {/* Header */}
       <div className="flex items-center justify-between mb-10 flex-wrap gap-4">
         <div className="flex items-center gap-4">
@@ -162,7 +242,10 @@ export default function DashboardPage() {
                 <span>{user.email}</span>
               </div>
             </div>
-            <button className="w-full mt-4 border border-gray-200 hover:border-amber-300 text-gray-600 hover:text-amber-700 font-medium py-2.5 rounded-xl transition-colors text-sm">
+            <button
+              onClick={openEdit}
+              className="w-full mt-4 border border-gray-200 hover:border-amber-300 text-gray-600 hover:text-amber-700 font-medium py-2.5 rounded-xl transition-colors text-sm"
+            >
               ویرایش پروفایل
             </button>
           </div>
