@@ -1,12 +1,15 @@
 "use client";
 import { useState } from "react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { FiMail, FiLock, FiEye, FiEyeOff, FiUser, FiBookOpen } from "react-icons/fi";
 import { FcGoogle } from "react-icons/fc";
 
 export default function RegisterPage() {
+  const router = useRouter();
   const [show, setShow] = useState(false);
-  const [showConfirm, setShowConfirm] = useState(false);
+  const [showC, setShowC] = useState(false);
+  const [loading, setLoading] = useState(false);
   const [form, setForm] = useState({ name: "", email: "", password: "", confirm: "" });
   const [errors, setErrors] = useState<Record<string, string>>({});
 
@@ -19,20 +22,35 @@ export default function RegisterPage() {
     return e;
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     const errs = validate();
     if (Object.keys(errs).length > 0) { setErrors(errs); return; }
-    alert("ثبت‌نام موفق! (نمایشی)");
+    setLoading(true);
+    await new Promise((r) => setTimeout(r, 900));
+    setLoading(false);
+    router.push("/");
   };
 
-  const field = (id: keyof typeof form) => ({
+  const handleGoogle = async () => {
+    setLoading(true);
+    await new Promise((r) => setTimeout(r, 700));
+    setLoading(false);
+    router.push("/");
+  };
+
+  const f = (id: keyof typeof form) => ({
     value: form[id],
     onChange: (e: React.ChangeEvent<HTMLInputElement>) => {
       setForm({ ...form, [id]: e.target.value });
       if (errors[id]) setErrors({ ...errors, [id]: "" });
     },
   });
+
+  const inputCls = (err?: string) =>
+    `w-full border rounded-xl py-2.5 pr-10 pl-4 text-sm focus:outline-none focus:ring-2 transition-all ${
+      err ? "border-red-300 focus:border-red-400 focus:ring-red-100" : "border-gray-200 focus:border-amber-400 focus:ring-amber-100"
+    }`;
 
   return (
     <div className="min-h-[80vh] flex items-center justify-center px-4 py-12">
@@ -47,7 +65,11 @@ export default function RegisterPage() {
         </div>
 
         <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-8">
-          <button className="w-full flex items-center justify-center gap-3 border border-gray-200 rounded-xl py-3 text-sm font-medium text-gray-700 hover:bg-gray-50 transition-colors mb-6">
+          <button
+            onClick={handleGoogle}
+            disabled={loading}
+            className="w-full flex items-center justify-center gap-3 border border-gray-200 rounded-xl py-3 text-sm font-medium text-gray-700 hover:bg-gray-50 active:scale-95 transition-all disabled:opacity-60 mb-6"
+          >
             <FcGoogle className="h-5 w-5" />
             ثبت‌نام با گوگل
           </button>
@@ -59,47 +81,29 @@ export default function RegisterPage() {
           </div>
 
           <form onSubmit={handleSubmit} className="space-y-4">
-            {/* Name */}
             <div>
               <label className="block text-sm font-semibold text-gray-700 mb-1.5">نام و نام خانوادگی</label>
               <div className="relative">
                 <FiUser className="absolute right-3 top-3 h-4 w-4 text-gray-400" />
-                <input
-                  type="text"
-                  placeholder="علی محمدی"
-                  {...field("name")}
-                  className={`w-full border rounded-xl py-2.5 pr-10 pl-4 text-sm focus:outline-none focus:ring-2 transition-all ${errors.name ? "border-red-300 focus:border-red-400 focus:ring-red-100" : "border-gray-200 focus:border-amber-400 focus:ring-amber-100"}`}
-                />
+                <input type="text" placeholder="علی محمدی" {...f("name")} className={inputCls(errors.name) + " pr-10"} />
               </div>
               {errors.name && <p className="text-xs text-red-500 mt-1">{errors.name}</p>}
             </div>
 
-            {/* Email */}
             <div>
               <label className="block text-sm font-semibold text-gray-700 mb-1.5">ایمیل</label>
               <div className="relative">
                 <FiMail className="absolute right-3 top-3 h-4 w-4 text-gray-400" />
-                <input
-                  type="email"
-                  placeholder="example@email.com"
-                  {...field("email")}
-                  className={`w-full border rounded-xl py-2.5 pr-10 pl-4 text-sm focus:outline-none focus:ring-2 transition-all ${errors.email ? "border-red-300 focus:border-red-400 focus:ring-red-100" : "border-gray-200 focus:border-amber-400 focus:ring-amber-100"}`}
-                />
+                <input type="email" placeholder="example@email.com" {...f("email")} className={inputCls(errors.email) + " pr-10"} />
               </div>
               {errors.email && <p className="text-xs text-red-500 mt-1">{errors.email}</p>}
             </div>
 
-            {/* Password */}
             <div>
               <label className="block text-sm font-semibold text-gray-700 mb-1.5">رمز عبور</label>
               <div className="relative">
                 <FiLock className="absolute right-3 top-3 h-4 w-4 text-gray-400" />
-                <input
-                  type={show ? "text" : "password"}
-                  placeholder="حداقل ۶ کاراکتر"
-                  {...field("password")}
-                  className={`w-full border rounded-xl py-2.5 pr-10 pl-10 text-sm focus:outline-none focus:ring-2 transition-all ${errors.password ? "border-red-300 focus:border-red-400 focus:ring-red-100" : "border-gray-200 focus:border-amber-400 focus:ring-amber-100"}`}
-                />
+                <input type={show ? "text" : "password"} placeholder="حداقل ۶ کاراکتر" {...f("password")} className={inputCls(errors.password) + " pr-10 pl-10"} />
                 <button type="button" onClick={() => setShow(!show)} className="absolute left-3 top-3 text-gray-400">
                   {show ? <FiEyeOff className="h-4 w-4" /> : <FiEye className="h-4 w-4" />}
                 </button>
@@ -107,41 +111,39 @@ export default function RegisterPage() {
               {errors.password && <p className="text-xs text-red-500 mt-1">{errors.password}</p>}
             </div>
 
-            {/* Confirm Password */}
             <div>
               <label className="block text-sm font-semibold text-gray-700 mb-1.5">تکرار رمز عبور</label>
               <div className="relative">
                 <FiLock className="absolute right-3 top-3 h-4 w-4 text-gray-400" />
-                <input
-                  type={showConfirm ? "text" : "password"}
-                  placeholder="رمز را دوباره وارد کن"
-                  {...field("confirm")}
-                  className={`w-full border rounded-xl py-2.5 pr-10 pl-10 text-sm focus:outline-none focus:ring-2 transition-all ${errors.confirm ? "border-red-300 focus:border-red-400 focus:ring-red-100" : "border-gray-200 focus:border-amber-400 focus:ring-amber-100"}`}
-                />
-                <button type="button" onClick={() => setShowConfirm(!showConfirm)} className="absolute left-3 top-3 text-gray-400">
-                  {showConfirm ? <FiEyeOff className="h-4 w-4" /> : <FiEye className="h-4 w-4" />}
+                <input type={showC ? "text" : "password"} placeholder="رمز را دوباره وارد کن" {...f("confirm")} className={inputCls(errors.confirm) + " pr-10 pl-10"} />
+                <button type="button" onClick={() => setShowC(!showC)} className="absolute left-3 top-3 text-gray-400">
+                  {showC ? <FiEyeOff className="h-4 w-4" /> : <FiEye className="h-4 w-4" />}
                 </button>
               </div>
               {errors.confirm && <p className="text-xs text-red-500 mt-1">{errors.confirm}</p>}
             </div>
 
             <p className="text-xs text-gray-400">
-              با ثبت‌نام، <Link href="#" className="text-amber-600">قوانین و شرایط</Link> را می‌پذیری.
+              با ثبت‌نام، <Link href="#" className="text-amber-600 hover:underline">قوانین و شرایط</Link> را می‌پذیری.
             </p>
 
             <button
               type="submit"
-              className="w-full bg-amber-600 hover:bg-amber-700 active:scale-95 text-white font-bold py-3.5 rounded-xl transition-all shadow-md shadow-amber-200"
+              disabled={loading}
+              className="w-full bg-amber-600 hover:bg-amber-700 active:scale-95 disabled:opacity-60 text-white font-bold py-3.5 rounded-xl transition-all shadow-md shadow-amber-200 flex items-center justify-center gap-2"
             >
-              ایجاد حساب
+              {loading ? (
+                <svg className="animate-spin h-5 w-5" viewBox="0 0 24 24" fill="none">
+                  <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
+                  <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8H4z" />
+                </svg>
+              ) : "ایجاد حساب"}
             </button>
           </form>
 
           <p className="text-center text-sm text-gray-500 mt-6">
             قبلاً حساب داری?{" "}
-            <Link href="/login" className="text-amber-600 hover:text-amber-700 font-semibold">
-              وارد شو
-            </Link>
+            <Link href="/login" className="text-amber-600 hover:text-amber-700 font-semibold">وارد شو</Link>
           </p>
         </div>
       </div>

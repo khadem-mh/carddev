@@ -1,4 +1,5 @@
-import { books, categories } from "@/lib/data";
+import { Suspense } from "react";
+import { books } from "@/lib/data";
 import BooksSection from "@/components/BooksSection";
 
 export default function BooksPage() {
@@ -10,7 +11,9 @@ export default function BooksPage() {
           <p className="text-gray-500">{books.length} عنوان موجود در فروشگاه</p>
         </div>
       </div>
-      <BooksSection />
+      <Suspense>
+        <BooksSection />
+      </Suspense>
     </div>
   );
 }
