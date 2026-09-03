@@ -7,7 +7,7 @@ import { useAuth } from "@/context/AuthContext";
 import { useCart } from "@/context/CartContext";
 import { FiLogOut, FiDownload, FiShoppingBag, FiUser, FiBookOpen, FiStar, FiPackage } from "react-icons/fi";
 import { HiStar } from "react-icons/hi";
-import { Book } from "@/lib/data";
+import { Book, books } from "@/lib/data";
 
 export default function DashboardPage() {
   const router = useRouter();
