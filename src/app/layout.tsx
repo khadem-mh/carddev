@@ -6,7 +6,7 @@ import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 
 export const metadata: Metadata = {
-  title: "کتاب‌خانه | فروشگاه آنلاین کتاب",
+  title: "13614118",
   description: "بیش از ۱۰،۰۰۰ عنوان کتاب با ارسال سریع",
 };
 
