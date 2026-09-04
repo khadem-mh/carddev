@@ -13,6 +13,9 @@ export const metadata: Metadata = {
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="fa" dir="rtl">
+      <head>
+        <meta name="enamad" content="13614118" />
+      </head>
       <body className="min-h-screen flex flex-col bg-[#f8f7f4]">
         <AuthProvider>
         <CartProvider>
