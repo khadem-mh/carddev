@@ -71,7 +71,7 @@ export default function Footer() {
           <a referrerPolicy="origin" target="_blank" href="https://trustseal.enamad.ir/?id=7217076&Code=z1RtGfxSc7vroTcEDFJyNHNd2FQ3Afcm">
             {/* eslint-disable-next-line @next/next/no-img-element */}
             {/* @ts-expect-error code is a custom attribute required by enamad */}
-            <img referrerPolicy="origin" src="https://trustseal.enamad.ir/logo.aspx?id=7217076&Code=z1RtGfxSc7vroTcEDFJyNHNd2FQ3Afcm" alt="نماد اعتماد الکترونیکی" style={{cursor: "pointer"}} code="z1RtGfxSc7vroTcEDFJyNHNd2FQ3Afcm" />
+            <img referrerPolicy="origin" src="/enamad-banner.jpg" alt="نماد اعتماد الکترونیکی" style={{cursor: "pointer"}} code="z1RtGfxSc7vroTcEDFJyNHNd2FQ3Afcm" />
           </a>
         </div>
       </div>
